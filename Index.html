@@ -47,12 +47,10 @@ button { cursor:pointer; border:none; background:none; }
 ::-webkit-scrollbar-thumb { background:var(--line2); border-radius:var(--rf); }
 ::-webkit-scrollbar-thumb:hover { background:var(--a1); }
 
-/* Top progress */
 .top-progress { position:fixed; top:0; left:0; right:0; height:3px; z-index:100; background:transparent; }
 .top-progress-bar { height:100%; width:0%; background:linear-gradient(90deg, var(--a1), var(--a2), var(--a3), var(--a1)); background-size:200% 100%; box-shadow:0 0 12px var(--glow); transition:width .15s linear; border-radius:0 999px 999px 0; animation:barShine 3s linear infinite; }
 @keyframes barShine { to { background-position:200% 0; } }
 
-/* Background */
 .bg { position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
 .aurora { position:absolute; inset:-50%; background:conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(34,211,238,.12) 60deg, transparent 120deg, rgba(139,92,246,.14) 180deg, transparent 240deg, rgba(236,72,153,.1) 300deg, transparent 360deg); animation:spin 60s linear infinite; filter:blur(60px); }
 @keyframes spin { 0% { transform:rotate(0deg); } 100% { transform:rotate(360deg); } }
@@ -75,7 +73,6 @@ button { cursor:pointer; border:none; background:none; }
 #confetti i { position:absolute; top:-14px; animation:confFall ease-in forwards; }
 @keyframes confFall { to { transform:translate(var(--dx,0), 108vh) rotate(var(--rot,360deg)); opacity:.15; } }
 
-/* Layout */
 .app { position:relative; z-index:1; max-width:1300px; margin:0 auto; padding:40px 24px 80px; animation:fadeInUp .8s var(--ez) both; }
 @keyframes fadeInUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
 .hdr { display:flex; align-items:center; gap:18px; margin-bottom:40px; animation:fadeInUp .8s var(--ez) .1s both; }
@@ -137,7 +134,6 @@ body.playing .eq { display:inline-flex; }
 .wmode.on { color:#fff !important; background:linear-gradient(135deg, var(--a1), var(--a2)) !important; border-color:transparent !important; box-shadow:0 6px 20px var(--glow); }
 .wmode.on:hover { transform:translateY(-2px) !important; }
 
-/* INSTALL BUTTON */
 .install-wrap { position:fixed; bottom:16px; right:16px; z-index:200; }
 .install-btn {
   display:inline-flex; align-items:center; gap:8px;
@@ -160,7 +156,6 @@ body.playing .eq { display:inline-flex; }
 .install-btn.hide { display:none; }
 .install-btn.done { animation:none; background:rgba(16,185,129,.2); border-color:rgba(16,185,129,.4); color:#34d399; }
 
-/* Install instructions modal */
 .install-modal {
   position:fixed; inset:0; z-index:300;
   background:rgba(0,0,0,.75);
@@ -443,7 +438,7 @@ body.playing #seek::-webkit-slider-thumb { animation:thumbPulse 1.6s ease-in-out
   </button>
 </div>
 
-<!-- Install instructions modal -->
+<!-- Install modal -->
 <div class="install-modal" id="installModal">
   <div class="install-modal-box">
     <h3>
@@ -452,7 +447,7 @@ body.playing #seek::-webkit-slider-thumb { animation:thumbPulse 1.6s ease-in-out
         <path d="M7 10l5 5 5-5"/>
         <path d="M12 15V3"/>
       </svg>
-      Install Listen & Read
+      Install Listen &amp; Read
     </h3>
     <p id="installMsg" style="color:var(--text2);font-size:.92rem;line-height:1.8;"></p>
     <ol id="installSteps"></ol>
@@ -464,7 +459,7 @@ body.playing #seek::-webkit-slider-thumb { animation:thumbPulse 1.6s ease-in-out
 
 <script>
 /* ═══════════════════════════════════════════════════
-   HELPER — في الأول دايمًا (لازم)
+   HELPER — في الأول دايمًا
    ═══════════════════════════════════════════════════ */
 const $ = id => document.getElementById(id);
 
@@ -484,7 +479,6 @@ const isAndroid = /Android/i.test(navigator.userAgent);
 const isStandalone = window.matchMedia('(display-mode: standalone)').matches
                   || window.navigator.standalone === true;
 
-/* إظهار الزر دايمًا إلا لو مثبت */
 if (isStandalone) {
   installBtn.style.display = 'none';
 } else {
@@ -492,7 +486,6 @@ if (isStandalone) {
   installTxt.textContent = 'Install App';
 }
 
-/* Chrome/Edge/Android: beforeinstallprompt */
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   deferredPrompt = e;
@@ -501,17 +494,13 @@ window.addEventListener('beforeinstallprompt', e => {
   installBtn.classList.remove('done');
 });
 
-/* بعد التثبيت */
 window.addEventListener('appinstalled', () => {
   deferredPrompt = null;
   installBtn.classList.add('done');
   installTxt.textContent = '✓ Installed';
-  setTimeout(() => {
-    installBtn.style.display = 'none';
-  }, 2500);
+  setTimeout(() => { installBtn.style.display = 'none'; }, 2500);
 });
 
-/* فتح modal التعليمات */
 function showInstallModal() {
   if (isIOS) {
     installMsg.textContent = 'تثبيت التطبيق على iPhone:';
@@ -539,7 +528,6 @@ function showInstallModal() {
   installModal.classList.add('show');
 }
 
-/* إغلاق modal */
 closeModalBtn.addEventListener('click', () => {
   installModal.classList.remove('show');
 });
@@ -547,9 +535,7 @@ installModal.addEventListener('click', e => {
   if (e.target === installModal) installModal.classList.remove('show');
 });
 
-/* الزر */
 installBtn.addEventListener('click', async () => {
-  /* 1. لو Chrome عطنا prompt — نستخدمه */
   if (deferredPrompt) {
     try {
       deferredPrompt.prompt();
@@ -557,9 +543,7 @@ installBtn.addEventListener('click', async () => {
       if (outcome === 'accepted') {
         installBtn.classList.add('done');
         installTxt.textContent = '✓ Installing…';
-        setTimeout(() => {
-          installBtn.style.display = 'none';
-        }, 2500);
+        setTimeout(() => { installBtn.style.display = 'none'; }, 2500);
       }
       deferredPrompt = null;
       return;
@@ -567,8 +551,6 @@ installBtn.addEventListener('click', async () => {
       console.warn('Install prompt failed:', err);
     }
   }
-
-  /* 2. تعليمات يدوية */
   showInstallModal();
 });
 
@@ -592,7 +574,6 @@ const fmt = s => isFinite(s) && s >= 0
   ? `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`
   : '0:00';
 
-/* Speech synthesis */
 if ('speechSynthesis' in window) {
   speechSynthesis.getVoices();
   speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
@@ -659,7 +640,6 @@ $('modeBtn').onclick = () => {
   applyWordMode();
 };
 
-/* Particles */
 (function particles() {
   if (reducedMotion()) return;
   const bg = $('bg');
@@ -681,7 +661,6 @@ $('modeBtn').onclick = () => {
   }
 })();
 
-/* Visualizer bars */
 (function buildViz() {
   const viz = $('viz');
   for (let i = 0; i < 44; i++) {
@@ -692,7 +671,6 @@ $('modeBtn').onclick = () => {
   }
 })();
 
-/* Confetti */
 function celebrate() {
   if (reducedMotion()) return;
   const c = $('confetti');
@@ -719,7 +697,6 @@ function setPlaying(on) {
   $('viz').classList.toggle('on', on);
 }
 
-/* List */
 function renderList(filter = '') {
   const list = $('list');
   if (typeof STORIES === 'undefined' || !STORIES.length) {
@@ -752,7 +729,6 @@ function renderList(filter = '') {
 
 $('q').addEventListener('input', e => renderList(e.target.value));
 
-/* Open story */
 function openStory(id) {
   const s = STORIES.find(x => x.id === id);
   if (!s) return;
@@ -922,7 +898,6 @@ $('loopBtn').onclick = () => {
   $('loopBtn').classList.toggle('on', isLooping);
 };
 
-/* Seek */
 const seekEl = $('seek');
 function ratioFromX(clientX) {
   const r = seekEl.getBoundingClientRect();
@@ -958,7 +933,6 @@ seekEl.addEventListener('touchstart', e => { const t = e.touches[0]; onSeekStart
 seekEl.addEventListener('touchmove', e => { const t = e.touches[0]; onSeekMove({ clientX: t.clientX }); }, { passive: true });
 seekEl.addEventListener('touchend', onSeekEnd, { passive: true });
 
-/* Speed */
 $('speeds').onclick = e => {
   const b = e.target.closest('[data-v]');
   if (!b) return;
@@ -972,7 +946,6 @@ $('speeds').onclick = e => {
   }
 };
 
-/* Font size */
 let fs = parseFloat(localStorage.getItem('lr_fs')) || 1.28;
 function applyFs() {
   document.documentElement.style.setProperty('--fs', fs.toFixed(2) + 'rem');
@@ -982,7 +955,6 @@ $('fsDn').onclick = () => { fs = Math.max(1.0, +(fs - 0.07).toFixed(2)); applyFs
 $('fsUp').onclick = () => { fs = Math.min(1.8, +(fs + 0.07).toFixed(2)); applyFs(); };
 applyFs();
 
-/* Audio events */
 audio.addEventListener('timeupdate', paint);
 audio.addEventListener('loadedmetadata', () => { $('dur').textContent = fmt(audio.duration); paint(); });
 audio.addEventListener('play', () => {
@@ -1015,7 +987,6 @@ audio.addEventListener('error', () => {
   $('note').textContent = '⚠️ ' + msg + ': ' + (story ? story.audio : '');
 });
 
-/* Keyboard */
 document.addEventListener('keydown', e => {
   if (e.ctrlKey || e.metaKey || e.altKey) return;
   if (e.target.closest('input, button, a')) return;
@@ -1027,26 +998,79 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'Escape') installModal.classList.remove('show');
 });
 
-/* Service Worker (اختياري) */
+/* ═══════════════════════════════════════════════════
+   SERVICE WORKER — Network First (بيحدّث تلقائي)
+   ═══════════════════════════════════════════════════ */
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-  const swCode = `const CACHE='lr-v1';
-self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['./','./stories.js'])).then(()=>self.skipWaiting()))});
-self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
-self.addEventListener('fetch',e=>{
-  if(e.request.method!=='GET')return;
-  e.respondWith(
-    fetch(e.request).then(r=>{const cl=r.clone();caches.open(CACHE).then(c=>c.put(e.request,cl));return r;})
-    .catch(()=>caches.match(e.request).then(m=>m||caches.match('./')))
-  );
-});`;
-  const blob = new Blob([swCode], { type: 'text/javascript' });
-  const url = URL.createObjectURL(blob);
-  navigator.serviceWorker.register(url).catch(err => {
-    console.warn('SW registration failed:', err.message);
-  });
+  /* 1. امسح كل الـ SW القديم */
+  navigator.serviceWorker.getRegistrations().then(regs => {
+    regs.forEach(r => {
+      try { r.unregister(); } catch {}
+    });
+  }).catch(() => {});
+
+  /* 2. امسح كل الـ caches القديمة */
+  if ('caches' in window) {
+    caches.keys().then(keys => {
+      keys.forEach(k => {
+        try { caches.delete(k); } catch {}
+      });
+    }).catch(() => {});
+  }
+
+  /* 3. سجّل SW جديد */
+  const swCode = `
+    const CACHE = 'lr-2025-v4';
+    self.addEventListener('install', () => self.skipWaiting());
+    self.addEventListener('activate', e => {
+      e.waitUntil(
+        caches.keys()
+          .then(keys => Promise.all(keys.map(k => caches.delete(k))))
+          .then(() => self.clients.claim())
+      );
+    });
+    self.addEventListener('fetch', e => {
+      if (e.request.method !== 'GET') return;
+      e.respondWith(
+        fetch(e.request)
+          .then(r => {
+            const cl = r.clone();
+            caches.open(CACHE).then(c => c.put(e.request, cl));
+            return r;
+          })
+          .catch(() => caches.match(e.request).then(m => m || caches.match('./')))
+      );
+    });
+    self.addEventListener('message', e => {
+      if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
+    });
+  `;
+
+  try {
+    const blob = new Blob([swCode], { type: 'text/javascript' });
+    const url = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(url).then(reg => {
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        if (newWorker) {
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              newWorker.postMessage({ type: 'SKIP_WAITING' });
+            }
+          });
+        }
+      });
+    }).catch(err => {
+      console.warn('SW registration failed:', err.message);
+    });
+  } catch (e) {
+    console.warn('SW setup error:', e);
+  }
 }
 
-/* Init */
+/* ═══════════════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════════════ */
 applyWordMode();
 renderList();
 if (typeof STORIES !== 'undefined' && STORIES.length) {
@@ -1055,6 +1079,8 @@ if (typeof STORIES !== 'undefined' && STORIES.length) {
   const startId = STORIES.some(s => s.id === lastId) ? lastId : STORIES[0].id;
   openStory(startId);
 }
+
+console.log('✓ Listen & Read loaded');
 </script>
 </body>
 </html>
